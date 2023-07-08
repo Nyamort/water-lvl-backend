@@ -1,0 +1,20 @@
+version: '3'
+services:
+  app:
+    image: node:20
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    depends_on:
+      - mongo
+    stdin_open: true
+    tty: true
+    command:
+      - /bin/bash
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data:/data/db
