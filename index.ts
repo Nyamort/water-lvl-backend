@@ -1,7 +1,7 @@
 import {createIot, findIot, findIots} from "./services/iot.service";
 import {Request, Response} from "express";
 import {createMeasurement, findMeasurementsBetweenDates} from "./services/measurement.service";
-import {addIotToTank, createTank} from "./services/tank.service";
+import {addIotToTank, createTank, findTanks} from "./services/tank.service";
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -55,6 +55,12 @@ app.patch('/tank/:id', async (req: Request, res: Response) => {
     const {ioT} = req.body as {ioT: string};
     const tank = await addIotToTank(id, ioT);
     res.json(tank);
+});
+
+// List all tanks
+app.get('/tanks', async (req: Request, res: Response) => {
+    const tanks = await findTanks({});
+    res.json(tanks);
 });
 
 // Get measurement of iot between dates

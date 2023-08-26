@@ -1,4 +1,4 @@
-import Measurement, {MeasurementInput} from "../models/measurement.model";
+import Measurement, {MeasurementDocument, MeasurementInput} from "../models/measurement.model";
 import {FilterQuery} from "mongoose";
 
 export async function createMeasurement(input: MeasurementInput) {
@@ -9,7 +9,7 @@ export async function createMeasurement(input: MeasurementInput) {
 export async function findMeasurementsBetweenDates(
     start: string,
     end: string,
-    query: FilterQuery<Measurement>
+    query: FilterQuery<MeasurementDocument>
 ) {
     return Measurement.aggregate([
         {
@@ -47,14 +47,19 @@ export async function findMeasurementsBetweenDates(
                 percentFilled: {
                     $multiply: [
                         {
-                            $divide: [
+                            $subtract: [
+                                1,
                                 {
-                                    $subtract: [
-                                        '$tank.dimensions.height',
-                                        '$height'
+                                    $divide: [
+                                        {
+                                            $subtract: [
+                                                '$tank.dimensions.height',
+                                                '$height'
+                                            ]
+                                        },
+                                        '$tank.dimensions.height'
                                     ]
-                                },
-                                '$tank.dimensions.height'
+                                }
                             ]
                         },
                         100
