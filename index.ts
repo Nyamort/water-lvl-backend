@@ -70,7 +70,6 @@ app.get('/measurement/:id', async (req: Request, res: Response) => {
     const measurements = await findMeasurementsBetweenDates(from, to, {
         ioT: id
     });
-    console.log(measurements);
     res.json(measurements);
 });
 // Lancer le serveur
