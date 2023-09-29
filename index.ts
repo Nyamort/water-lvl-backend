@@ -44,7 +44,7 @@ app.post('/measurement', async (req: Request, res: Response) => {
 
 // Ajouter un tank
 app.post('/tank', async (req: Request, res: Response) => {
-    const {name, dimensions, ioT} = req.body as {name: string, dimensions: {length: number, width: number, height: number}};
+    const {name, dimensions} = req.body as {name: string, dimensions: {length: number, width: number, height: number}};
     const tank = await createTank({name, dimensions});
     res.json(tank);
 });
