@@ -2,7 +2,6 @@ import Measurement, {MeasurementDocument, MeasurementInput} from "../models/meas
 import {FilterQuery} from "mongoose";
 
 export async function createMeasurement(input: MeasurementInput) {
-    input.createdAt = new Date();
     return Measurement.create<MeasurementInput>(input);
 }
 

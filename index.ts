@@ -38,7 +38,7 @@ app.get('/iot', async (req: Request, res: Response) => {
 // Ajouter une mesure
 app.post('/measurement', async (req: Request, res: Response) => {
     const {height, ioT} = req.body as {height: number, ioT: string};
-    const measurement = await createMeasurement({height, ioT});
+    const measurement = await createMeasurement({height, ioT, createdAt: new Date()});
     res.json(measurement);
 });
 
