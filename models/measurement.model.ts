@@ -19,6 +19,7 @@ const measurementSchema = new Schema({
 export interface MeasurementInput {
     height: number;
     ioT: string;
+    createdAt: Date;
 }
 
 export interface MeasurementDocument extends MeasurementInput, Document {
