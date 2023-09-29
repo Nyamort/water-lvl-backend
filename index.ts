@@ -11,7 +11,7 @@ const app = express();
 app.use(bodyParser.json());
 
 // Connexion à la base de données MongoDB
-mongoose.connect('mongodb://mongo:27017/myapp', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to MongoDB'))
     .catch((error: any) => console.log('MongoDB connection error:', error));
 
