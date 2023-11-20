@@ -15,6 +15,10 @@ mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopol
     .then(() => console.log('Connected to MongoDB'))
     .catch((error: any) => console.log('MongoDB connection error:', error));
 
+app.get('/', (req, res) => {
+  res.send('ok')
+})
+
 // Ajouter un iot
 app.post('/iot', async (req: Request, res: Response) => {
     const {name, key} = req.body as {name: string, key: string};
