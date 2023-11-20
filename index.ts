@@ -2,6 +2,7 @@ import {createIot, findIot, findIots} from "./services/iot.service";
 import {Request, Response} from "express";
 import {createMeasurement, findMeasurementsBetweenDates} from "./services/measurement.service";
 import {addIotToTank, createTank, findTanks} from "./services/tank.service";
+import path from "path";
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -9,14 +10,15 @@ const mongoose = require('mongoose');
 
 const app = express();
 app.use(bodyParser.json());
+app.use(express.static('public'))
 
 // Connexion à la base de données MongoDB
 mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to MongoDB'))
     .catch((error: any) => console.log('MongoDB connection error:', error));
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('ok')
+app.get('/', (req, res) => {
+    res.sendFile('index.html', {root: path.join(__dirname, 'public')});
 })
 
 // Ajouter un iot
@@ -77,6 +79,9 @@ app.get('/measurement/:id', async (req: Request, res: Response) => {
     res.json(measurements);
 });
 // Lancer le serveur
-app.listen(3000, () => {
+app.listen(process.env.PORT || 3000, () => {
     console.log('Server running on port 3000');
 });
+
+module.exports = app
+
