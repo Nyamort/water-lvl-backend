@@ -17,7 +17,7 @@ mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopol
     .then(() => console.log('Connected to MongoDB'))
     .catch((error: any) => console.log('MongoDB connection error:', error));
 
-app.get('/', (req, res) => {
+app.get('/', (req: Request, res:Response) => {
     res.sendFile('index.html', {root: path.join(__dirname, 'public')});
 })
 
