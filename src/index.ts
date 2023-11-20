@@ -82,6 +82,3 @@ app.get('/measurement/:id', async (req: Request, res: Response) => {
 app.listen(process.env.PORT || 3000, () => {
     console.log('Server started');
 });
-
-export default app;
-
