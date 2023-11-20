@@ -18,7 +18,7 @@ mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopol
     .catch((error: any) => console.log('MongoDB connection error:', error));
 
 app.get('/', (req: Request, res:Response) => {
-    res.sendFile('index.html', {root: path.join(__dirname, 'public')});
+    res.sendStatus(200);
 })
 
 // Ajouter un iot
@@ -80,8 +80,8 @@ app.get('/measurement/:id', async (req: Request, res: Response) => {
 });
 // Lancer le serveur
 app.listen(process.env.PORT || 3000, () => {
-    console.log('Server running on port 3000');
+    console.log('Server started');
 });
 
-module.exports = app
+export default app;
 
