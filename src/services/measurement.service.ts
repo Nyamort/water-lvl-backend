@@ -2,7 +2,8 @@ import Measurement, {MeasurementDocument, MeasurementInput} from "../models/meas
 import {FilterQuery} from "mongoose";
 
 export async function createMeasurement(input: MeasurementInput) {
-    return await Measurement.create<MeasurementInput>(input);
+
+    return await Measurement.create<MeasurementDocument>(input);
 }
 
 export async function findMeasurementsBetweenDates(

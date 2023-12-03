@@ -1,9 +1,4 @@
-import mongoose, {Schema, Document} from "mongoose";
-
-export interface IotInput {
-    name: string;
-    key: string;
-}
+import {Schema, Document, model} from "mongoose";
 
 const iotSchema = new Schema({
     name: String,
@@ -14,9 +9,9 @@ const iotSchema = new Schema({
     }
 })
 
- export interface IotDocument extends IotInput, Document {
+export interface IotDocument extends Document {
     name: string;
     key: string;
- }
+}
 
-export default mongoose.model('Iot', iotSchema);
+export default model<IotDocument>('Iot', iotSchema);

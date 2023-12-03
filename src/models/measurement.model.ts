@@ -1,4 +1,5 @@
-import mongoose, {Schema, Document} from "mongoose";
+import {model, Schema, Document, Types} from "mongoose";
+import {IotDocument} from "./iot.model";
 
 const measurementSchema = new Schema({
     createdAt: Date,
@@ -16,16 +17,10 @@ const measurementSchema = new Schema({
     }
 });
 
-export interface MeasurementInput {
-    height: number;
-    ioT: string;
-    createdAt: Date;
-}
-
-export interface MeasurementDocument extends MeasurementInput, Document {
+export interface MeasurementDocument extends Document {
     createdAt: Date;
     height: number;
-    ioT: string;
+    ioT: Types.ObjectId | IotDocument;
 }
 
-export default mongoose.model('Measurement', measurementSchema);
+export default model('Measurement', measurementSchema);

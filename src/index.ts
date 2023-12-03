@@ -2,7 +2,6 @@ import {createIot, findIot, findIots} from "./services/iot.service";
 import {Request, Response} from "express";
 import {createMeasurement, findMeasurementsBetweenDates} from "./services/measurement.service";
 import {addIotToTank, createTank, findTanks} from "./services/tank.service";
-import path from "path";
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -10,7 +9,12 @@ const mongoose = require('mongoose');
 
 const app = express();
 app.use(bodyParser.json());
-app.use(express.static('public'))
+
+//log all requests
+app.use((req: Request, res: Response, next: any) => {
+    console.log(req.method, req.path);
+    next();
+});
 
 // Connexion à la base de données MongoDB
 mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -21,30 +25,10 @@ app.get('/', (req: Request, res:Response) => {
     res.sendStatus(200);
 })
 
-// Ajouter un iot
-app.post('/iot', async (req: Request, res: Response) => {
-    const {name, key} = req.body as {name: string, key: string};
-    const iot = await createIot({name, key});
-    res.json(iot);
-})
-
-// Récupérer un iot
-app.get('/iot/:id', async (req: Request, res: Response) => {
-    const {id} = req.params;
-    const iot = await findIot({_id: id});
-    res.json(iot);
-})
-
-// Récupérer tous les iots
-app.get('/iot', async (req: Request, res: Response) => {
-    const iots = await findIots({});
-    res.json(iots);
-});
-
 // Ajouter une mesure
 app.post('/measurement', async (req: Request, res: Response) => {
     const {height, ioT} = req.body as {height: number, ioT: string};
-    const measurement = await createMeasurement({height, ioT, createdAt: new Date()});
+    const measurement = await createMeasurement({height, ioT: new mongoose.ObjectId(ioT), createdAt: new Date()});
     res.json(measurement);
 });
 
@@ -74,7 +58,7 @@ app.get('/measurement/:id', async (req: Request, res: Response) => {
     const {id} = req.params;
     const {from, to} = req.query as {from: string, to: string};
     const measurements = await findMeasurementsBetweenDates(from, to, {
-        ioT: id
+        ioT: new mongoose.ObjectId(id)
     });
     res.json(measurements);
 });

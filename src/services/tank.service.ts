@@ -16,7 +16,6 @@ export async function findTanks(
     query: FilterQuery<TankDocument>,
     options: QueryOptions = {lean: true}
 ) {
-    // return Tank.find(query, {}, options);
     return Tank.aggregate([
         {
             $lookup: {
