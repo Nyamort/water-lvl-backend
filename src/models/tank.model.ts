@@ -1,4 +1,4 @@
-import {Schema, Document, Types, model, Model, Query} from "mongoose";
+import {Schema, Document, Types, model, Model} from "mongoose";
 import {IotDocument} from "./iot.model";
 
 const tankSchema = new Schema<TankDocument>({
@@ -28,55 +28,5 @@ export interface TankModel extends Model<TankDocument> {}
 
 const tankModel: TankModel = model<TankDocument>('Tank', tankSchema);
 
-tankSchema.pre('find', function (this: TankModel, next) {
-    this.aggregate([
-        {
-            $lookup: {
-                from: 'measurements',
-                localField: 'ioT',
-                foreignField: 'ioT',
-                as: 'measurements'
-            }
-        },
-        {
-            $unwind: "$measurements"
-        },
-        {
-            $set: {
-                percentFilled: {
-                    $round: [
-                        {
-                            $multiply: [
-                                {
-                                    $subtract: [
-                                        1,
-                                        {
-                                            $divide: [
-                                                {
-                                                    $subtract: [
-                                                        '$dimensions.height',
-                                                        {
-                                                            $max: '$measurements.height'
-                                                        }
-                                                    ]
-                                                },
-                                                '$dimensions.height'
-                                            ]
-                                        }
-                                    ]
-                                },
-                                100
-                            ]
-                        },
-                        2
-                    ]
-
-                }
-            }
-        }
-    ]);
-    next();
-
-});
 
 export default tankModel;

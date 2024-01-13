@@ -1,95 +1,107 @@
-import Tank, {TankDocument, TankInput} from "../models/tank.model";
+import Tank, {TankDocument} from "../models/tank.model";
 import {FilterQuery, QueryOptions} from "mongoose";
 
-export async function createTank(input: TankInput) {
-    return Tank.create<TankInput>(input);
-}
 
-export async function findTank(
-    query: FilterQuery<TankDocument>,
-    options: QueryOptions = {lean: true}
-) {
-    return Tank.findOne(query, {}, options);
-}
+class TankService {
+    async create(input: any) {
+        return Tank.create(input);
+    }
 
-export async function findTanks(
-    query: FilterQuery<TankDocument>,
-    options: QueryOptions = {lean: true}
-) {
-    return Tank.aggregate([
-        {
-            $lookup: {
-                from: 'measurements',
-                localField: 'ioT',
-                foreignField: 'ioT',
-                as: 'measurements'
-            }
-        },
-        {
-            $unwind: "$measurements"
-        },
-        {
-            $set: {
-                percentFilled: {
-                    $round: [
-                        {
-                            $multiply: [
-                                {
-                                    $subtract: [
-                                        1,
-                                        {
-                                            $divide: [
-                                                {
-                                                    $subtract: [
-                                                        '$dimensions.height',
-                                                        {
-                                                            $max: '$measurements.height'
-                                                        }
-                                                    ]
-                                                },
-                                                '$dimensions.height'
-                                            ]
-                                        }
-                                    ]
-                                },
-                                100
-                            ]
-                        },
-                        2
-                    ]
+    async findOne(
+        query: FilterQuery<TankDocument>,
+        options: QueryOptions = {lean: true}
+    ) {
+        return Tank.findOne(query, {}, options);
+    }
+
+    async findTanks() {
+        return this.aggregate();
+    }
+
+    async addIotToTank(
+        tankId: string,
+        iotId: string
+    ) {
+        await Tank.updateOne(
+            {_id: tankId},
+            {ioT: iotId}
+        );
+        return this.findOne({_id: tankId});
+    }
+
+    aggregate() {
+        return Tank.aggregate([
+            {
+                $lookup: {
+                    from: 'measurements',
+                    localField: 'ioT',
+                    foreignField: 'ioT',
+                    as: 'measurements'
+                }
+            },
+            {
+                $unwind: '$measurements'
+            },
+            {
+                $sort: {
+                    'measurements.createdAt': -1
+                }
+            },
+            {
+                $group: {
+                    _id: '$_id',
+                    lastMeasurement: {
+                        $first: '$measurements'
+                    },
+                    dimensions: {
+                        $first: '$dimensions'
+                    },
+                    name: {
+                        $first: '$name'
+                    }
 
                 }
+            },
+            {
+                $set: {
+                    percentFilled: {
+                        $round: [
+                            {
+                                $multiply: [
+                                    {
+                                        $subtract: [
+                                            1,
+                                            {
+                                                $divide: [
+                                                    {
+                                                        $subtract: [
+                                                            '$dimensions.height',
+                                                            '$lastMeasurement.height'
+                                                        ]
+                                                    },
+                                                    '$dimensions.height'
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    100
+                                ]
+                            },
+                            2
+                        ]
+
+                    }
+                }
+            },
+            {
+                $project: {
+                    'measurements': 0,
+                    'lastMeasurement': 0,
+                }
             }
-        },
-        {
-            $sort: {
-                "measurements.createdAt": -1
-            }
-        },
-        {
-            $group: {
-                _id: "$_id",
-                name: { $first: "$name" },
-                dimensions: { $first: "$dimensions" },
-                iot: { $first: "$ioT" },
-                latestMeasure: { $first: "$percentFilled" }
-            }
-        },
-        {
-            $sort: {
-                name: 1
-            }
-        }
-    ]);
+        ]);
+    }
 }
 
-export async function addIotToTank(
-    tankId: string,
-    iotId: string
-) {
-    await Tank.updateOne(
-        {_id: tankId},
-        {ioT: iotId}
-    );
-    return findTank({_id: tankId});
-}
+
+export default new TankService();

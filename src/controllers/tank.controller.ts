@@ -1,20 +1,22 @@
-import TankService from "@services/tank.service";
+import {Request, Response} from "express";
+import tankService from "../services/tank.service";
 
 class TankController {
-    async createIot(req, res) {
-        const {name, key} = req.body;
-        const iot = await TankService.createIot({name, key});
-        res.json(iot);
+    async create(req: Request, res: Response) {
+        const {name, dimensions, ioT} = req.body;
+        const tank = await tankService.create({name, dimensions, ioT});
+        res.json(tank);
     }
 
-    async findIot(req, res) {
+    async show(req: Request, res: Response) {
         const {id} = req.params;
-        const iot = await TankService.findIotById(id);
-        res.json(iot);
+        const tank = await tankService.findOne({_id: id});
+        res.json(tank);
     }
-    async findAll(req, res) {
-        const iots = await TankService.findIots();
-        res.json(iots);
+
+    async index(req: Request, res: Response) {
+        const tanks = await tankService.findTanks();
+        res.json(tanks);
     }
 }
 

@@ -1,12 +1,12 @@
-import express from 'express';
-import IotController from '@controllers/iot.controller';
+import express, {Application} from 'express';
+import IotController from "../controllers/iot.controller";
 const router = express.Router();
-const iotRouter = (app) => {
+const iotRouter = (app: Application) => {
 
     app.use('/iots', router);
-    app.get('/', IotController.index);
-    app.get('/:id', IotController.show);
-    app.post('/', IotController.create);
+    router.get('/', IotController.index);
+    router.get('/:id', IotController.show);
+    router.post('/', IotController.create);
 }
 
-module.exports = iotRouter;
+export default iotRouter;

@@ -1,12 +1,12 @@
-import express from 'express';
-import TankController from '@controllers/tank.controller';
+import express, {Application} from 'express';
+import TankController from "../controllers/tank.controller";
 const router = express.Router();
-const iotRouter = (app) => {
+const iotRouter = (app: Application) => {
 
     app.use('/tanks', router);
-    app.get('/', TankController.findAll);
-    app.post('/', TankController.createIot);
-    app.get('/:id', TankController.findIot);
+    router.get('/', TankController.index);
+    router.post('/', TankController.create);
+    router.get('/:id', TankController.show);
 }
 
-module.exports = iotRouter;
+export default iotRouter;

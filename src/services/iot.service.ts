@@ -13,7 +13,7 @@ class IotService {
     }
 
     async find(
-        query: FilterQuery<Partial<IotDocument>>,
+        query: FilterQuery<IotDocument>,
         options: QueryOptions = { lean: true }
     ){
         return Iot.findOne(query, {}, options);
@@ -25,7 +25,7 @@ class IotService {
 
 
     async findAll(
-        query: FilterQuery<Partial<IotDocument>> = {},
+        query: FilterQuery<IotDocument> = {},
         options: QueryOptions = { lean: true }
     ){
         return Iot.find(query, {}, options);
